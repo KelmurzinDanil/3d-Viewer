@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/External/GLFW/glfw-3.4.bin.WIN32/include",
+                "${workspaceFolder}/External/GLEW/glew-2.1.0/include",
+                "C:/VulkanSDK/1.4.309.0/Include",
+                "${workspaceFolder}/External/glm"
+            ],
+            "defines": [
+                "GLFW_INCLUDE_VULKAN",
+                "GLM_FORCE_RADIANS",
+                "GLM_FORCE_DEPTH_ZERO_TO_ONE",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.43.34808/bin/Hostx64/x64/cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
