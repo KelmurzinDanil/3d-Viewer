@@ -16,5 +16,11 @@
   "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DSHADER_DIR=\\\"C:/Users/Данил/Proga/C++/3d-Viewer/build/shaders\\\" -DUNICODE -D_UNICODE -IC:/Users/Данил/Proga/C++/3d-Viewer/External/GLFW/glfw-3.4.bin.WIN32/include -IC:/Users/Данил/Proga/C++/3d-Viewer/External/GLEW/glew-2.1.0/include -IC:/VulkanSDK/1.4.309.0/Include -IC:/Users/Данил/Proga/C++/3d-Viewer/External/glm -g -std=gnu++17 -o CMakeFiles\\VulkanApp.dir\\src\\core\\Application.cpp.obj -c C:\\Users\\Данил\\Proga\\C++\\3d-Viewer\\src\\core\\Application.cpp",
   "file": "C:\\Users\\Данил\\Proga\\C++\\3d-Viewer\\src\\core\\Application.cpp",
   "output": "CMakeFiles\\VulkanApp.dir\\src\\core\\Application.cpp.obj"
+},
+{
+  "directory": "C:/Users/Данил/Proga/C++/3d-Viewer/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DSHADER_DIR=\\\"C:/Users/Данил/Proga/C++/3d-Viewer/build/shaders\\\" -DUNICODE -D_UNICODE -IC:/Users/Данил/Proga/C++/3d-Viewer/External/GLFW/glfw-3.4.bin.WIN32/include -IC:/Users/Данил/Proga/C++/3d-Viewer/External/GLEW/glew-2.1.0/include -IC:/VulkanSDK/1.4.309.0/Include -IC:/Users/Данил/Proga/C++/3d-Viewer/External/glm -g -std=gnu++17 -o CMakeFiles\\VulkanApp.dir\\src\\core\\PipelineBuilder.cpp.obj -c C:\\Users\\Данил\\Proga\\C++\\3d-Viewer\\src\\core\\PipelineBuilder.cpp",
+  "file": "C:\\Users\\Данил\\Proga\\C++\\3d-Viewer\\src\\core\\PipelineBuilder.cpp",
+  "output": "CMakeFiles\\VulkanApp.dir\\src\\core\\PipelineBuilder.cpp.obj"
 }
 ]

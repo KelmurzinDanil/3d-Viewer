@@ -79,6 +79,16 @@ build CMakeFiles/VulkanApp.dir/src/core/Application.cpp.obj: CXX_COMPILER__Vulka
   TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
   TARGET_PDB = VulkanApp.pdb
 
+build CMakeFiles/VulkanApp.dir/src/core/PipelineBuilder.cpp.obj: CXX_COMPILER__VulkanApp_unscanned_Debug C$:/Users/Данил/Proga/C++/3d-Viewer/src/core/PipelineBuilder.cpp || cmake_object_order_depends_target_VulkanApp
+  DEFINES = -DGLM_FORCE_DEPTH_ZERO_TO_ONE -DGLM_FORCE_RADIANS -DSHADER_DIR=\"C:/Users/Данил/Proga/C++/3d-Viewer/build/shaders\" -DUNICODE -D_UNICODE
+  DEP_FILE = CMakeFiles\VulkanApp.dir\src\core\PipelineBuilder.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/Users/Данил/Proga/C++/3d-Viewer/External/GLFW/glfw-3.4.bin.WIN32/include -IC:/Users/Данил/Proga/C++/3d-Viewer/External/GLEW/glew-2.1.0/include -IC:/VulkanSDK/1.4.309.0/Include -IC:/Users/Данил/Proga/C++/3d-Viewer/External/glm
+  OBJECT_DIR = CMakeFiles\VulkanApp.dir
+  OBJECT_FILE_DIR = CMakeFiles\VulkanApp.dir\src\core
+  TARGET_COMPILE_PDB = CMakeFiles\VulkanApp.dir\
+  TARGET_PDB = VulkanApp.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target VulkanApp
@@ -87,7 +97,7 @@ build CMakeFiles/VulkanApp.dir/src/core/Application.cpp.obj: CXX_COMPILER__Vulka
 #############################################
 # Link the executable VulkanApp.exe
 
-build VulkanApp.exe: CXX_EXECUTABLE_LINKER__VulkanApp_Debug CMakeFiles/VulkanApp.dir/src/main.cpp.obj CMakeFiles/VulkanApp.dir/src/core/VulkanRenderer.cpp.obj CMakeFiles/VulkanApp.dir/src/core/Application.cpp.obj | C$:/Users/Данил/Proga/C++/3d-Viewer/External/GLFW/glfw-3.4.bin.WIN32/lib-vc2022/glfw3.lib C$:/Users/Данил/Proga/C++/3d-Viewer/External/GLEW/glew-2.1.0/lib/Release/Win32/glew32.lib C$:/VulkanSDK/1.4.309.0/Lib/vulkan-1.lib
+build VulkanApp.exe: CXX_EXECUTABLE_LINKER__VulkanApp_Debug CMakeFiles/VulkanApp.dir/src/main.cpp.obj CMakeFiles/VulkanApp.dir/src/core/VulkanRenderer.cpp.obj CMakeFiles/VulkanApp.dir/src/core/Application.cpp.obj CMakeFiles/VulkanApp.dir/src/core/PipelineBuilder.cpp.obj | C$:/Users/Данил/Proga/C++/3d-Viewer/External/GLFW/glfw-3.4.bin.WIN32/lib-vc2022/glfw3.lib C$:/Users/Данил/Proga/C++/3d-Viewer/External/GLEW/glew-2.1.0/lib/Release/Win32/glew32.lib C$:/VulkanSDK/1.4.309.0/Lib/vulkan-1.lib
   FLAGS = -g
   LINK_LIBRARIES = C:/Users/Данил/Proga/C++/3d-Viewer/External/GLFW/glfw-3.4.bin.WIN32/lib-vc2022/glfw3.lib  C:/Users/Данил/Proga/C++/3d-Viewer/External/GLEW/glew-2.1.0/lib/Release/Win32/glew32.lib  C:/VulkanSDK/1.4.309.0/Lib/vulkan-1.lib  -lopengl32  -lgdi32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\VulkanApp.dir

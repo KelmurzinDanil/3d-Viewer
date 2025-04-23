@@ -15,7 +15,9 @@
 #include <fstream>
 #include <array>
 #include <cstring>
-
+#include <memory>
+#include "PipelineStrategy.hpp"
+#include "VulkanTypes.hpp"
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -32,6 +34,7 @@ struct SwapChainSupportDetails {
     std::vector<VkPresentModeKHR> presentModes;
 };
 
+
 class VulkanRenderer {
 public:
     VulkanRenderer(GLFWwindow* win);
@@ -47,41 +50,43 @@ private:
     const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
     const std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
-    // Основные объекты Vulkan
-    GLFWwindow* window;
-    VkInstance instance;
-    VkPhysicalDevice physicalDevice{VK_NULL_HANDLE};
-    VkDevice device;
-    VkSurfaceKHR surface;
-    VkSwapchainKHR swapChain;
+    std::unique_ptr<PipelineStrategy> pipelineStrategy;
+
+
+    GLFWwindow* window;                      
+    VkInstancePtr instance;                  
+    VkPhysicalDevice physicalDevice;        
+    VkDevicePtr device;                     
+    VkSurfaceKHRPtr surface;                  
+    VkSwapchainKHRPtr swapChain;              
     
     // Очереди
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
+    VkQueue graphicsQueue;                 
+    VkQueue presentQueue;                  
 
     // Цепочка подкачки
-    std::vector<VkImage> swapChainImages;
+    std::vector<VkImage> swapChainImages;    
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
-    std::vector<VkImageView> swapChainImageViews;
+    std::vector<VkImageViewPtr> swapChainImageViews;
 
     // Графический конвейер
-    VkRenderPass renderPass;
-    VkPipelineLayout pipelineLayout;
-    VkPipeline graphicsPipeline;
-    std::vector<VkFramebuffer> swapChainFramebuffers;
+    VkRenderPassPtr renderPass;               
+    VkPipelineLayoutPtr pipelineLayout;       
+    VkPipelinePtr graphicsPipeline;           
+    std::vector<VkFramebufferPtr> swapChainFramebuffers; 
 
     // Команды
-    VkCommandPool commandPool;
-    VkCommandBuffer commandBuffer;
+    VkCommandPoolPtr commandPool;             
+    VkCommandBuffer commandBuffer;           
 
     // Синхронизация
-    VkSemaphore imageAvailableSemaphore;
-    VkSemaphore renderFinishedSemaphore;
-    VkFence inFlightFence;
+    VkSemaphorePtr imageAvailableSemaphore;   
+    VkSemaphorePtr renderFinishedSemaphore;   
+    VkFencePtr inFlightFence;                 
 
     // Отладка
-    VkDebugUtilsMessengerEXT debugMessenger;
+    VkDebugUtilsMessengerEXTPtr debugMessenger; 
 
     //===============================================
     // Инициализация и очистка
@@ -114,7 +119,6 @@ private:
     void createGraphicsPipeline();
     void createFramebuffers();
     VkShaderModule createShaderModule(const std::vector<char>& code);
-    static std::vector<char> readFile(const std::string& filename);
 
     //===============================================
     // Команды и синхронизация

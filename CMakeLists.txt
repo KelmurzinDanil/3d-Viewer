@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.20)
 project(VulkanApp)
 
@@ -20,6 +21,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/core/VulkanRenderer.cpp
     src/core/Application.cpp
+    src/core/PipelineBuilder.cpp
 )
 
 # Определение макроса SHADER_DIR как строки
