@@ -13,6 +13,27 @@
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\CommandManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\DeviceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\InstanceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\SwapChainManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\SurfaceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\Данил\Proga\C++\3d-Viewer\CMakeLists.txt" />

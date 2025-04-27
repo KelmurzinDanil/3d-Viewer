@@ -3,12 +3,13 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "VulkanRenderer.hpp"
+#include "DeviceManager.hpp"
+#include "VulkanTypes.hpp"
 
 class PipelineBuilder {
 public:
     PipelineBuilder(VkDevice device, VkRenderPass renderPass);
-    
+
     // Устанавливает вершинный и фрагментный шейдеры
     PipelineBuilder& setShaders(const std::string& vertPath, const std::string& fragPath);
     

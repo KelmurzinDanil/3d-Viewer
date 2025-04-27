@@ -2,3 +2,10 @@ C:\Users\Данил\Proga\C++\3d-Viewer\src\main.cpp;C:\Users\Данил\Proga\C
 C:\Users\Данил\Proga\C++\3d-Viewer\src\core\VulkanRenderer.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\VulkanRenderer.obj
 C:\Users\Данил\Proga\C++\3d-Viewer\src\core\Application.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\Application.obj
 C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineBuilder.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\PipelineBuilder.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\CommandManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\CommandManager.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\DeviceManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\DeviceManager.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\InstanceManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\InstanceManager.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\SwapChainManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\SwapChainManager.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\SurfaceManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\SurfaceManager.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\WindowManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\WindowManager.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\PipelineManager.obj

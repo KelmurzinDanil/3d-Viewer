@@ -1,24 +1,37 @@
 #pragma once
 #include <vulkan/vulkan.h>
 #include <memory>
+/**
+ * @brief Шаблонный удалитель для Vulkan объектов
+ * Реализует RAII-управление ресурсами Vulkan через std::unique_ptr
+ * 
+ * @tparam T Тип Vulkan объекта (например, VkInstance_T)
+ * @tparam DeleteFunc Функция удаления Vulkan (например, vkDestroyInstance)
+ * @tparam DeleteArgs Типы дополнительных аргументов функции удаления
+ */
 template <typename T, auto DeleteFunc, typename... DeleteArgs>
 struct VulkanDeleter {
     VulkanDeleter(DeleteArgs... args) : args(std::forward<DeleteArgs>(args)...) {}
 
     void operator()(T* obj) const {
         if (obj) {
+             // Распаковываем сохраненные аргументы и вызываем функцию удаления
             std::apply([&](auto&&... params) {
-                DeleteFunc(params..., obj, nullptr);
+                DeleteFunc(params..., obj, nullptr); 
             }, args);
         }
     }
 
 private:
-    std::tuple<DeleteArgs...> args;
+    std::tuple<DeleteArgs...> args; ///< Сохраненные аргументы для функции удаления
 };
 
+/**
+ * @brief Специализированный удалитель для VkDebugUtilsMessengerEXT
+ * Требует ручного получения функции-деструктора через vkGetInstanceProcAddr
+ */
 struct DebugUtilsMessengerDeleter {
-    VkInstance instance;
+    VkInstance instance; ///< Экземпляр Vulkan, необходимый для получения функции
 
     DebugUtilsMessengerDeleter(VkInstance inst = VK_NULL_HANDLE) : instance(inst) {}
 
@@ -29,6 +42,7 @@ struct DebugUtilsMessengerDeleter {
         }
     }
 };
+
 
 using VkDebugUtilsMessengerEXTPtr = std::unique_ptr<VkDebugUtilsMessengerEXT_T, DebugUtilsMessengerDeleter>;
 
@@ -72,4 +86,10 @@ using VkFramebufferPtr = std::unique_ptr<VkFramebuffer_T,
 using VkShaderModulePtr = std::unique_ptr<VkShaderModule_T,
  VulkanDeleter<VkShaderModule_T, vkDestroyShaderModule, VkDevice>>;
 
- 
+
+/**
+ * Allocator (VkAllocationCallbacks) в Vulkan — это механизм управления памятью,
+ *  позволяющий приложению контролировать выделение/освобождение памяти,
+ *  используемой Vulkan. В вашем коде nullptr( DeleteFunc(params..., obj, nullptr); ) в качестве allocator
+ *  означает использование стандартного аллокатора Vulkan.
+*/ 

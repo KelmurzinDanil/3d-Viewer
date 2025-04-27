@@ -328,6 +328,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\VulkanRenderer.cpp" />
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\Application.cpp" />
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineBuilder.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\CommandManager.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\DeviceManager.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\InstanceManager.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\SwapChainManager.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\SurfaceManager.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\WindowManager.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineManager.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

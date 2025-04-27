@@ -1,163 +1,50 @@
-#ifndef VULKAN_RENDERER_H
-#define VULKAN_RENDERER_H
-
-#define NOMINMAX
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <vector>
-#include <optional>
-#include <iostream>
-#include <stdexcept>
-#include <set>
-#include <algorithm>
-#include <limits>      
-#include <cstdint>
-#include <fstream>
-#include <array>
-#include <cstring>
-#include <memory>
+#pragma once
+//#define NOMINMAX
+#include "DeviceManager.hpp"
+#include "SwapChainManager.hpp"
+#include "CommandManager.hpp"
+#include "PipelineBuilder.hpp"
 #include "PipelineStrategy.hpp"
-#include "VulkanTypes.hpp"
-
-struct QueueFamilyIndices {
-    std::optional<uint32_t> graphicsFamily;
-    std::optional<uint32_t> presentFamily;
-    
-    bool isComplete() const { 
-        return graphicsFamily.has_value() && presentFamily.has_value(); 
-    }
-};
-
-struct SwapChainSupportDetails {
-    VkSurfaceCapabilitiesKHR capabilities;
-    std::vector<VkSurfaceFormatKHR> formats;
-    std::vector<VkPresentModeKHR> presentModes;
-};
-
+#include "BasicTriangleStrategy.hpp"
+#include "PipelineManager.hpp"
+#include <memory>
 
 class VulkanRenderer {
 public:
-    VulkanRenderer(GLFWwindow* win);
-    ~VulkanRenderer();
-    
-    void initVulkan();
-    void cleanup();
+
+    VulkanRenderer(const VulkanRenderer&) = delete;
+    VulkanRenderer& operator=(const VulkanRenderer&) = delete;
+
+
+    VulkanRenderer(WindowManager& windowManager, DeviceManager& deviceManager,
+         SwapChainManager& swapChainManager, PipelineManager& pipelineManager, InstanceManager& instanceManager, SurfaceManager& surfaceManager,
+         CommandManager& commandManager,
+          bool enableValidationLayers);
+
+    /**
+     * @brief Отрисовывает один кадр
+     * Управляет синхронизацией и отправкой команд в GPU
+     */
     void drawFrame();
 
 private:
-    // Константы и настройки
-    const int MAX_FRAMES_IN_FLIGHT = 2;
-    const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
-    const std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+    // Ссылки на менеджеры (владение объектами остается за ними)
+    InstanceManager& instanceManager_;
+    DeviceManager& deviceManager_;
+    SurfaceManager& surfaceManager_;
+    SwapChainManager& swapChainManager_;
+    PipelineManager& pipelineManager_;
+    CommandManager& commandManager_;
+    WindowManager& windowManager_;
 
-    std::unique_ptr<PipelineStrategy> pipelineStrategy;
-
-
-    GLFWwindow* window;                      
-    VkInstancePtr instance;                  
-    VkPhysicalDevice physicalDevice;        
-    VkDevicePtr device;                     
-    VkSurfaceKHRPtr surface;                  
-    VkSwapchainKHRPtr swapChain;              
+  
+    bool enableValidationLayers_;///< Флаг использования слоев валидации
     
-    // Очереди
-    VkQueue graphicsQueue;                 
-    VkQueue presentQueue;                  
+    VkRenderPassPtr renderPass;
+    VkPipelinePtr graphicsPipeline;
+    std::vector<VkFramebufferPtr> swapChainFramebuffers;
+    
 
-    // Цепочка подкачки
-    std::vector<VkImage> swapChainImages;    
-    VkFormat swapChainImageFormat;
-    VkExtent2D swapChainExtent;
-    std::vector<VkImageViewPtr> swapChainImageViews;
-
-    // Графический конвейер
-    VkRenderPassPtr renderPass;               
-    VkPipelineLayoutPtr pipelineLayout;       
-    VkPipelinePtr graphicsPipeline;           
-    std::vector<VkFramebufferPtr> swapChainFramebuffers; 
-
-    // Команды
-    VkCommandPoolPtr commandPool;             
-    VkCommandBuffer commandBuffer;           
-
-    // Синхронизация
-    VkSemaphorePtr imageAvailableSemaphore;   
-    VkSemaphorePtr renderFinishedSemaphore;   
-    VkFencePtr inFlightFence;                 
-
-    // Отладка
-    VkDebugUtilsMessengerEXTPtr debugMessenger; 
-
-    //===============================================
-    // Инициализация и очистка
-    //===============================================
-    void createInstance();
-    void setupDebugMessenger();
-    void createSurface();
-    void pickPhysicalDevice();
-    void createLogicalDevice();
-    bool checkValidationLayerSupport();
-    std::vector<const char*> getRequiredExtensions();
-
-    //===============================================
-    //  SwapChain и ImageViews
-    //===============================================
-    void createSwapChain();
-    void recreateSwapChain();
-    void cleanupSwapChain();
-    void createImageViews();
-    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats);
-    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& modes);
-    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-
-    //===============================================
-    // Графический конвейер
-    //===============================================
-
-    void createRenderPass();
-    void createGraphicsPipeline();
-    void createFramebuffers();
-    VkShaderModule createShaderModule(const std::vector<char>& code);
-
-    //===============================================
-    // Команды и синхронизация
-    //===============================================
-
-    void createCommandPool();
-    void createCommandBuffer();
-    void createSyncObjects();
-    void recordCommandBuffer(VkCommandBuffer buffer, uint32_t imageIndex);
-
-    //===============================================
-    // Вспомогательные утилиты
-    //===============================================
-
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-    bool isDeviceSuitable(VkPhysicalDevice device);
-    bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-
-    //===============================================
-    // Валидация и отладка
-    //===============================================
-
-    void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
-    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-        VkDebugUtilsMessageTypeFlagsEXT messageType,
-        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData);
-        
-    VkResult CreateDebugUtilsMessengerEXT(
-        VkInstance instance,
-        const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-        const VkAllocationCallbacks* pAllocator,
-        VkDebugUtilsMessengerEXT* pDebugMessenger);
-        
-    void DestroyDebugUtilsMessengerEXT(
-        VkInstance instance,
-        VkDebugUtilsMessengerEXT debugMessenger,
-        const VkAllocationCallbacks* pAllocator);
+    
+    std::unique_ptr<PipelineStrategy> pipelineStrategy;
 };
-
-#endif 

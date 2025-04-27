@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run VulkanApp",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Debug/VulkanApp.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/Debug",
+            "environment": [],
+            "externalConsole": true,
+            "preLaunchTask": "build",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}

@@ -2,45 +2,66 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-Application::Application()
-    : window(nullptr), renderer(nullptr) {
-    if (!glfwInit()) {
-        throw std::runtime_error("Failed to initialize GLFW");
-    }
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    window = glfwCreateWindow(800, 600, "3D Viewer", nullptr, nullptr);
-    if (!window) {
-        glfwTerminate();
-        throw std::runtime_error("Failed to create GLFW window");
-    }
-
+Application::Application() : enableValidationLayers(true) {
     try {
-        renderer = new VulkanRenderer(window);
+        initializeGLFW();
+        initializeManagers();
+        initializeRenderer();
     } catch (...) {
-        glfwDestroyWindow(window);
-        glfwTerminate();
+        cleanup();
         throw;
     }
 }
-
 Application::~Application() {
-    delete renderer;
-    if (window) {
-        glfwDestroyWindow(window);
+    cleanup();
+}
+void Application::initializeGLFW() {
+    if (!glfwInit()) {
+        throw std::runtime_error("Failed to initialize GLFW");
     }
-    glfwTerminate();
 }
 
+void Application::initializeManagers() {
+    windowManager = std::make_unique<WindowManager>(800, 600, "3D Viewer");
+    instanceManager = std::make_unique<InstanceManager>(enableValidationLayers);
+    surfaceManager = std::make_unique<SurfaceManager>(*instanceManager, *windowManager);
+    deviceManager = std::make_unique<DeviceManager>(*instanceManager, *surfaceManager);
+    swapChainManager = std::make_unique<SwapChainManager>(*deviceManager, *surfaceManager, *windowManager);
+    pipelineManager = std::make_unique<PipelineManager>(*deviceManager, *swapChainManager);
+    commandManager = std::make_unique<CommandManager>(*deviceManager, *swapChainManager, *pipelineManager);
+}
+
+void Application::initializeRenderer() {
+    renderer = std::make_unique<VulkanRenderer>(
+        *windowManager,
+        *deviceManager,
+        *swapChainManager,
+        *pipelineManager,
+        *instanceManager,
+        *surfaceManager,
+        *commandManager,
+        enableValidationLayers
+    );
+}
+
+void Application::cleanup() {
+    renderer.reset();
+    commandManager.reset();
+    swapChainManager.reset();
+    pipelineManager.reset();
+    deviceManager.reset();
+    surfaceManager.reset();
+    instanceManager.reset();
+    windowManager.reset(); 
+    glfwTerminate();
+}
 void Application::run() {
     mainLoop();
-    renderer->cleanup();
 }
 
 void Application::mainLoop() {
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
+    while (!windowManager->shouldClose()) {
+        windowManager->pollEvents();
         drawFrame();
     }
 }

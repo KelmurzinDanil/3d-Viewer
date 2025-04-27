@@ -22,6 +22,13 @@ add_executable(${PROJECT_NAME}
     src/core/VulkanRenderer.cpp
     src/core/Application.cpp
     src/core/PipelineBuilder.cpp
+    src/core/CommandManager.cpp
+    src/core/DeviceManager.cpp
+    src/core/InstanceManager.cpp
+    src/core/SwapChainManager.cpp
+    src/core/SurfaceManager.cpp
+    src/core/WindowManager.cpp
+    src/core/PipelineManager.cpp
 )
 
 # Определение макроса SHADER_DIR как строки
