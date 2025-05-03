@@ -17,7 +17,8 @@ public:
     void createCommandPool();
     void createCommandBuffer();
     void createSyncObjects();
-    void recordCommandBuffer(VkCommandBuffer commandBuffer_,uint32_t imageIndex);
+    void recordCommandBuffer(VkCommandBuffer commandBuffer_, uint32_t imageIndex, VkBuffer vertexBuffer);
+    
     
     VkCommandPool commandPool() const { return commandPool_.get(); }
 
@@ -33,6 +34,7 @@ public:
     VkSemaphore imageAvailableSemaphore() const { return imageAvailableSemaphore_.get(); }
     VkSemaphore renderFinishedSemaphore() const { return renderFinishedSemaphore_.get(); }
     VkFence inFlightFence() const { return inFlightFence_.get(); }
+    VkCommandPool getCommandPool() const {return commandPool_.get();}
     
 private:
     VkCommandPoolPtr commandPool_;

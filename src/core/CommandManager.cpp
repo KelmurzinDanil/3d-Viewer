@@ -10,7 +10,6 @@ CommandManager::CommandManager(DeviceManager& deviceManager,
     createCommandPool();
     createCommandBuffer();
     createSyncObjects();
-
 }
 
 
@@ -43,12 +42,7 @@ void CommandManager::createCommandBuffer() {
         throw std::runtime_error("failed to allocate command buffers!");
     }
 }
-
-
-
-
-
-void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
+void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkBuffer vertexBuffer) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -60,32 +54,35 @@ void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = swapChainManager_.renderPass.get();
     renderPassInfo.framebuffer = swapChainManager_.swapChainFramebuffers[imageIndex].get();
-    renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = swapChainManager_.getExtent();
-
+    
     VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
     renderPassInfo.clearValueCount = 1;
     renderPassInfo.pClearValues = &clearColor;
 
     vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineManager_.getGraphicsPipeline());
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineManager_.getGraphicsPipeline());
 
-        VkViewport viewport{};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        viewport.width = (float) swapChainManager_.getExtent().width;
-        viewport.height = (float) swapChainManager_.getExtent().height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-        vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+    VkViewport viewport{};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = (float) swapChainManager_.getSwapChainExtent().width;
+    viewport.height = (float) swapChainManager_.getSwapChainExtent().height;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+    vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
-        VkRect2D scissor{};
-        scissor.offset = {0, 0};
-        scissor.extent = swapChainManager_.getExtent();
-        vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+    VkRect2D scissor{};
+    scissor.offset = {0, 0};
+    scissor.extent = swapChainManager_.getSwapChainExtent();
+    vkCmdSetScissor(commandBuffer, 0, 1, &scissor); 
 
-        vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+    VkBuffer vertexBuffers[] = {vertexBuffer};
+    VkDeviceSize offsets[] = {0};
+    vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+    vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
 
     vkCmdEndRenderPass(commandBuffer);
 
@@ -93,6 +90,7 @@ void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t
         throw std::runtime_error("failed to record command buffer!");
     }
 }
+
 void CommandManager::createSyncObjects() {
     VkSemaphoreCreateInfo semaphoreInfo{};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

@@ -5,6 +5,7 @@
 #include <string>
 #include "DeviceManager.hpp"
 #include "VulkanTypes.hpp"
+#include "Vertex.hpp"
 
 class PipelineBuilder {
 public:
@@ -41,10 +42,15 @@ public:
 
     PipelineBuilder& setPipelineLayout(VkPipelineLayout layout);
 
+    PipelineBuilder& setVertexInfo();
+
     // Создает и возвращает готовый конвейер
     VkPipelinePtr build();
 
 private:
+    VkVertexInputBindingDescription bindingDescription_; // Store binding
+    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions_; // Store attributes
+
     VkDevice device; 
     VkRenderPass renderPass;
     VkViewport viewport{};  

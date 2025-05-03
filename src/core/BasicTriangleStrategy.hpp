@@ -13,6 +13,7 @@ public:
         };
         return builder
             .setShaders(SHADER_DIR "/vert.spv", SHADER_DIR "/frag.spv")
+            .setVertexInfo()
             .setPipelineLayout(layout) 
             .setColorBlending() 
             .setInputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)

@@ -132,7 +132,21 @@ PipelineBuilder& PipelineBuilder::setPipelineLayout(VkPipelineLayout layout) {
     return *this;
 }
 
+PipelineBuilder& PipelineBuilder::setVertexInfo(){
+    bindingDescription_ = Vertex::getBindingDescription();
+    attributeDescriptions_ = Vertex::getAttributeDescriptions();
+
+    vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInputInfo.vertexBindingDescriptionCount = 1;
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions_.size());
+    vertexInputInfo.pVertexBindingDescriptions = &bindingDescription_;
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions_.data();
+
+    return *this;
+}
+
 VkPipelinePtr PipelineBuilder::build() {
+    
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.stageCount = static_cast<uint32_t>(shaderStages.size());

@@ -45,6 +45,10 @@ void Application::initializeRenderer() {
 }
 
 void Application::cleanup() {
+    if (deviceManager && deviceManager->device()) {
+        vkDeviceWaitIdle(deviceManager->device()); // Ждём завершения всех операций GPU
+    }
+
     renderer.reset();
     commandManager.reset();
     swapChainManager.reset();

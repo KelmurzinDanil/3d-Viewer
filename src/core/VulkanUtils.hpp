@@ -1,4 +1,5 @@
 #pragma once
+#include <vulkan/vulkan.h>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -58,5 +59,28 @@ namespace VulkanUtils {
         return shaderModule;
     }
 
+    inline uint32_t findMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+        //Структура VkPhysicalDeviceMemoryProperties содержит два массива memoryTypes и memoryHeaps
+        VkPhysicalDeviceMemoryProperties memProperties;
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+ 
+        //Найдём тип памяти, подходящий для самого буфера:
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+            //(1)
+            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)  {
+                return i;
+            }
+        }
+        
+        throw std::runtime_error("failed to find suitable memory type!");
+    }
 }
 
+/** 1. Параметр typeFilter будет использоваться для указания битового поля подходящих типов памяти.
+ *  Это означает, что мы можем найти индекс подходящего типа памяти, просто перебирая их и проверяя,
+ *  установлен ли соответствующий бит в 1.
+ *  Однако нас интересует не только тип памяти, подходящий для вершинного буфера.
+ *  Нам также нужно иметь возможность записывать данные вершин в эту память.
+ *  Массив memoryTypes состоит из VkMemoryType структур, которые определяют кучу и свойства каждого типа памяти.
+ *  Свойства определяют особые характеристики памяти, например возможность сопоставления с ней, чтобы мы могли записывать в неё из процессора.
+ *  Это свойство обозначается VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, но нам также нужно использовать свойство VK_MEMORY_PROPERTY_HOST_COHERENT_BIT.*/

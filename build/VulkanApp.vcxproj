@@ -335,6 +335,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\SurfaceManager.cpp" />
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\WindowManager.cpp" />
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineManager.cpp" />
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\Vertex.cpp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -46,6 +46,11 @@ struct DebugUtilsMessengerDeleter {
 
 using VkDebugUtilsMessengerEXTPtr = std::unique_ptr<VkDebugUtilsMessengerEXT_T, DebugUtilsMessengerDeleter>;
 
+using VkDeviceMemoryPtr = std::unique_ptr<VkDeviceMemory_T,
+VulkanDeleter<VkDeviceMemory_T, vkFreeMemory, VkDevice>>;
+
+using VkBufferPtr = std::unique_ptr<VkBuffer_T,
+VulkanDeleter<VkBuffer_T, vkDestroyBuffer, VkDevice>>;
 
 using VkInstancePtr = std::unique_ptr<VkInstance_T, 
     VulkanDeleter<VkInstance_T, vkDestroyInstance>>;

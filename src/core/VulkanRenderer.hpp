@@ -7,6 +7,8 @@
 #include "PipelineStrategy.hpp"
 #include "BasicTriangleStrategy.hpp"
 #include "PipelineManager.hpp"
+#include "Vertex.hpp"
+//#include "VulkanUtils.hpp"
 #include <memory>
 
 class VulkanRenderer {
@@ -26,8 +28,21 @@ public:
      * Управляет синхронизацией и отправкой команд в GPU
      */
     void drawFrame();
+    
 
 private:
+    /**
+     * @brief Создает вершинный буфер и выделяет память
+     */
+    void createVertexBuffer();
+
+    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+        VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+    
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+
+    void checkBindingsConsistency();
+    void validateVertexAttributes();
     // Ссылки на менеджеры (владение объектами остается за ними)
     InstanceManager& instanceManager_;
     DeviceManager& deviceManager_;
@@ -39,7 +54,11 @@ private:
 
   
     bool enableValidationLayers_;///< Флаг использования слоев валидации
-    
+    VkBuffer rawVertexBuffer;
+    VkDeviceMemory rawVertexBufferMemory;
+
+    VkDeviceMemoryPtr vertexBufferMemory;
+    VkBufferPtr vertexBuffer;  ///< Вершинный буфер
     VkRenderPassPtr renderPass;
     VkPipelinePtr graphicsPipeline;
     std::vector<VkFramebufferPtr> swapChainFramebuffers;
