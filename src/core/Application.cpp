@@ -29,6 +29,11 @@ void Application::initializeManagers() {
     swapChainManager = std::make_unique<SwapChainManager>(*deviceManager, *surfaceManager, *windowManager);
     pipelineManager = std::make_unique<PipelineManager>(*deviceManager, *swapChainManager);
     commandManager = std::make_unique<CommandManager>(*deviceManager, *swapChainManager, *pipelineManager);
+    bufferManager = std::make_unique<BufferManager>(
+        *deviceManager, commandManager->getCommandPool(), *swapChainManager
+    );
+
+    
 }
 
 void Application::initializeRenderer() {
@@ -40,6 +45,7 @@ void Application::initializeRenderer() {
         *instanceManager,
         *surfaceManager,
         *commandManager,
+        *bufferManager,
         enableValidationLayers
     );
 }
@@ -50,6 +56,7 @@ void Application::cleanup() {
     }
 
     renderer.reset();
+    bufferManager.reset();
     commandManager.reset();
     swapChainManager.reset();
     pipelineManager.reset();

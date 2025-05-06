@@ -34,6 +34,9 @@
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\BufferManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\Данил\Proga\C++\3d-Viewer\src\core\Vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -3,9 +3,9 @@
 #include <vector>
 #include "DeviceManager.hpp"
 #include "VulkanTypes.hpp"
+#include "BufferManager.hpp"
 #include "SwapChainManager.hpp"
 #include "PipelineManager.hpp"
-
 
 class CommandManager {
 public:
@@ -17,7 +17,7 @@ public:
     void createCommandPool();
     void createCommandBuffer();
     void createSyncObjects();
-    void recordCommandBuffer(VkCommandBuffer commandBuffer_, uint32_t imageIndex, VkBuffer vertexBuffer);
+    void recordCommandBuffer(VkCommandBuffer commandBuffer_, uint32_t imageIndex, VkBuffer vertexBuffer, VkBuffer indexBuffer);
     
     
     VkCommandPool commandPool() const { return commandPool_.get(); }
@@ -35,6 +35,7 @@ public:
     VkSemaphore renderFinishedSemaphore() const { return renderFinishedSemaphore_.get(); }
     VkFence inFlightFence() const { return inFlightFence_.get(); }
     VkCommandPool getCommandPool() const {return commandPool_.get();}
+
     
 private:
     VkCommandPoolPtr commandPool_;

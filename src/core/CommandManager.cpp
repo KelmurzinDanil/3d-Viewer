@@ -1,4 +1,6 @@
 #include "CommandManager.hpp"
+
+
 CommandManager::CommandManager(DeviceManager& deviceManager, 
     SwapChainManager& swapChainManager, PipelineManager& pipelineManager) : deviceManager_(deviceManager),
     swapChainManager_(swapChainManager),pipelineManager_(pipelineManager),
@@ -42,7 +44,7 @@ void CommandManager::createCommandBuffer() {
         throw std::runtime_error("failed to allocate command buffers!");
     }
 }
-void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkBuffer vertexBuffer) {
+void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkBuffer vertexBuffer, VkBuffer indexBuffer) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -82,8 +84,10 @@ void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-    vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
+    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(BufferManager::indices.size()), 1, 0, 0, 0);
+    
     vkCmdEndRenderPass(commandBuffer);
 
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {

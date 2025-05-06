@@ -74,6 +74,8 @@ namespace VulkanUtils {
         
         throw std::runtime_error("failed to find suitable memory type!");
     }
+
+    
 }
 
 /** 1. Параметр typeFilter будет использоваться для указания битового поля подходящих типов памяти.

@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
     src/core/SurfaceManager.cpp
     src/core/WindowManager.cpp
     src/core/PipelineManager.cpp
+    src/core/BufferManager.cpp
     src/core/Vertex.cpp
 )
 
