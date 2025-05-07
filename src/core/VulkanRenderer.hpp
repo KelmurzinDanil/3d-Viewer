@@ -1,5 +1,5 @@
 #pragma once
-//#define NOMINMAX
+//#define GLM_FORCE_RADIANS
 #include "DeviceManager.hpp"
 #include "SwapChainManager.hpp"
 #include "CommandManager.hpp"
@@ -9,8 +9,11 @@
 #include "PipelineManager.hpp"
 #include "Vertex.hpp"
 #include "BufferManager.hpp"
-//#include "VulkanUtils.hpp"
 #include <memory>
+#include <chrono>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 
 
@@ -31,7 +34,8 @@ public:
      * Управляет синхронизацией и отправкой команд в GPU
      */
     void drawFrame();
-    
+
+    void updateUniformBuffer(uint32_t currentImage);
 
 private:
     
@@ -47,7 +51,7 @@ private:
   
     bool enableValidationLayers_;///< Флаг использования слоев валидации
 
-  
+    uint32_t currentFrame = 0;
 
     VkRenderPassPtr renderPass;
     VkPipelinePtr graphicsPipeline;

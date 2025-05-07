@@ -2,7 +2,9 @@
 #include "DeviceManager.hpp"
 #include "SwapChainManager.hpp"
 #include "Vertex.hpp"
+#include "Constants.hpp"
 #include <vector>
+#include <vulkan/vulkan.h>
 
 
 
@@ -10,10 +12,12 @@
 class BufferManager {
     public:
         BufferManager(DeviceManager& deviceManager, VkCommandPool commandPool, SwapChainManager& swapChainManager);
-        static const std::vector<uint16_t> indices;
 
         VkBuffer getIndexBuffer() const {return indexBuffer.get();}
         VkBuffer getVertexBuffer() const {return vertexBuffer.get();}
+
+        const std::vector<void*>& getUniformBuffersMapped() const;
+        const std::vector<VkBufferPtr>& getUniformBuffers() const;
     private:
         DeviceManager& deviceManager_;
         VkCommandPool commandPool_;
@@ -28,12 +32,17 @@ class BufferManager {
         VkDeviceMemoryPtr vertexBufferMemory;
         VkBufferPtr vertexBuffer;  ///< Вершинный буфер
         
+        
+        std::vector<VkBufferPtr> uniformBuffers;
+        std::vector<VkDeviceMemoryPtr> uniformBuffersMemory;
+        std::vector<void*> uniformBuffersMapped;
+
         /**
         * @brief Создает вершинный буфер и выделяет память
         */
         void createVertexBuffer();
         void createIndexBuffer();
-
+        void createUniformBuffers();
 
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
             VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

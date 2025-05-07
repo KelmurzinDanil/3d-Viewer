@@ -2,6 +2,8 @@
 #include "DeviceManager.hpp"
 #include "SwapChainManager.hpp"
 #include "BasicTriangleStrategy.hpp"
+#include "BufferManager.hpp"
+#include "Constants.hpp"
 
 class PipelineManager {
     public:
@@ -9,11 +11,23 @@ class PipelineManager {
         
         void createPipelineLayout();
         void createGraphicsPipeline();
-    
+
+        void createDescriptorSetLayout();   
+        void createDescriptorPool(); 
+        void createDescriptorSets(const std::vector<VkBufferPtr>& uniformBuffers);
+
         VkPipelineLayout getLayout() const { return pipelineLayout_.get(); }
         VkPipeline getGraphicsPipeline() const { return graphicsPipeline_.get(); }
+        std::vector<VkDescriptorSet> getDescriptorSets() const {return descriptorSets;}
     
     private:
+
+
+        VkDescriptorSetLayoutPtr descriptorSetLayout;
+        VkDescriptorPoolPtr descriptorPool;
+
+        std::vector<VkDescriptorSet> descriptorSets;
+
         DeviceManager& deviceManager_;
         SwapChainManager& swapChainManager_;
         

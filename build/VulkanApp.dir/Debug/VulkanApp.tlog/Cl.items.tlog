@@ -11,3 +11,4 @@ C:\Users\Данил\Proga\C++\3d-Viewer\src\core\WindowManager.cpp;C:\Users\Да
 C:\Users\Данил\Proga\C++\3d-Viewer\src\core\PipelineManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\PipelineManager.obj
 C:\Users\Данил\Proga\C++\3d-Viewer\src\core\BufferManager.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\BufferManager.obj
 C:\Users\Данил\Proga\C++\3d-Viewer\src\core\Vertex.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\Vertex.obj
+C:\Users\Данил\Proga\C++\3d-Viewer\src\core\Constants.cpp;C:\Users\Данил\Proga\C++\3d-Viewer\build\VulkanApp.dir\Debug\Constants.obj

@@ -1,9 +1,5 @@
 #include "BufferManager.hpp"
 
-const std::vector<uint16_t> BufferManager::indices = {
-    0, 1, 2, 2, 3, 0
-};
-
 BufferManager::BufferManager(DeviceManager& deviceManager,
                              VkCommandPool commandPool,
                              SwapChainManager& swapChainManager) 
@@ -17,7 +13,14 @@ vertexBufferMemory(nullptr, VulkanDeleter<VkDeviceMemory_T, vkFreeMemory, VkDevi
 {
     createVertexBuffer();
     createIndexBuffer();
+    createUniformBuffers();
 }
+
+const std::vector<VkBufferPtr>& BufferManager::getUniformBuffers() const {
+    return uniformBuffers; }
+const std::vector<void*>& BufferManager::getUniformBuffersMapped() const {
+     return uniformBuffersMapped; }
+
 void BufferManager::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
     VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
 
@@ -51,11 +54,11 @@ void BufferManager::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
 }
 
 void BufferManager::createIndexBuffer() {
-    if (indices.empty()) {
+    if (Constants::indices.empty()) {
         throw std::runtime_error("Index data is empty!");
     }
 
-    VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+    VkDeviceSize bufferSize = sizeof(Constants::indices[0]) * Constants::indices.size();
 
     // Создание staging буфера
     VkBuffer stagingBuffer;
@@ -71,7 +74,7 @@ void BufferManager::createIndexBuffer() {
     // Заполнение staging буфера
     void* data;
     vkMapMemory(deviceManager_.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
+    memcpy(data, Constants::indices.data(), static_cast<size_t>(bufferSize));
     vkUnmapMemory(deviceManager_.device(), stagingBufferMemory);
 
     // Создание основного индексного буфера
@@ -154,6 +157,31 @@ void BufferManager::createVertexBuffer() {
     // Очистка staging ресурсов
     vkDestroyBuffer(deviceManager_.device(), stagingBuffer, nullptr);
     vkFreeMemory(deviceManager_.device(), stagingBufferMemory, nullptr);
+}
+void BufferManager::createUniformBuffers() {
+    VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+    uniformBuffersMapped.resize(Constants::MAX_FRAMES_IN_FLIGHT);
+
+    for (size_t i = 0; i < Constants::MAX_FRAMES_IN_FLIGHT; i++) {
+        VkBuffer buffer;
+        VkDeviceMemory memory;
+
+        createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+            buffer, memory);
+
+        uniformBuffers.emplace_back(
+            buffer,
+            VulkanDeleter<VkBuffer_T, vkDestroyBuffer, VkDevice>(deviceManager_.device()));
+    
+        uniformBuffersMemory.emplace_back(
+            memory,
+            VulkanDeleter<VkDeviceMemory_T, vkFreeMemory, VkDevice>(deviceManager_.device()));
+        
+        vkMapMemory(deviceManager_.device(), uniformBuffersMemory.back().get(), 
+            0, bufferSize, 0, &uniformBuffersMapped[i]);
+    }
 }
 
 void BufferManager::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {

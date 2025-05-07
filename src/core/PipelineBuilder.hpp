@@ -44,6 +44,8 @@ public:
 
     PipelineBuilder& setVertexInfo();
 
+
+
     // Создает и возвращает готовый конвейер
     VkPipelinePtr build();
 
@@ -66,5 +68,6 @@ private:
     VkPipelineLayout pipelineLayout; // Макет конвейера
     VkPipelineColorBlendAttachmentState colorBlendAttachment{}; // Состояние смешивания для вложений
     VkPipelineDepthStencilStateCreateInfo depthStencil{};
+    
     std::vector<VkDynamicState> dynamicStates_;
 };

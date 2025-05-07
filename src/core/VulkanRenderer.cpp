@@ -21,8 +21,11 @@ VulkanRenderer::VulkanRenderer(WindowManager& windowManager,
       renderPass(nullptr, VulkanDeleter<VkRenderPass_T, vkDestroyRenderPass, VkDevice>(nullptr)),
       graphicsPipeline(nullptr, VulkanDeleter<VkPipeline_T, vkDestroyPipeline, VkDevice>(nullptr))
        {
+        pipelineManager_.createDescriptorSetLayout();
         pipelineManager_.createPipelineLayout();
         pipelineManager_.createGraphicsPipeline();
+        pipelineManager_.createDescriptorPool();
+        pipelineManager_.createDescriptorSets(bufferManager_.getUniformBuffers());
       }
 
 void VulkanRenderer::drawFrame() {
@@ -30,12 +33,6 @@ void VulkanRenderer::drawFrame() {
     VkFence rawInFlightFence = commandManager_.inFlightFence();
     VkSemaphore rawImageAvailableSemaphore = commandManager_.imageAvailableSemaphore();
     VkSemaphore rawRenderFinishedSemaphore = commandManager_.renderFinishedSemaphore();
-
-    if (rawInFlightFence == VK_NULL_HANDLE ||  //Потом удалить!!
-        rawImageAvailableSemaphore == VK_NULL_HANDLE ||
-        rawRenderFinishedSemaphore == VK_NULL_HANDLE) {
-        throw std::runtime_error("Invalid synchronization objects!");
-    } 
 
     // Ожидаем завершение предыдущего кадра
     vkWaitForFences(deviceManager_.device(), 1, &rawInFlightFence, VK_TRUE, UINT64_MAX);
@@ -45,34 +42,24 @@ void VulkanRenderer::drawFrame() {
     // Получаем индекс изображения из цепочки подкачки
     uint32_t imageIndex;
 
-    //vkAcquireNextImageKHR(
-    //    deviceManager_.device(), 
-    //    swapChainManager_.swapChain.get(), 
-    //    UINT64_MAX, 
-    //    rawImageAvailableSemaphore, 
-    //    VK_NULL_HANDLE, 
-    //    &imageIndex
-    //);
-
-    VkResult result = vkAcquireNextImageKHR(deviceManager_.device(), //Потом удалить!!
+    VkResult result = vkAcquireNextImageKHR(deviceManager_.device(), 
     swapChainManager_.swapChain.get(), 
     UINT64_MAX, 
     rawImageAvailableSemaphore, 
     VK_NULL_HANDLE, 
     &imageIndex);
 
-    if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) { //Потом удалить!!
-        throw std::runtime_error("Failed to acquire image!");
-    }
-    VkCommandBuffer commandBuffer = commandManager_.getCommandBuffer(); //Потом удалить!!
-    if (commandBuffer == VK_NULL_HANDLE) {                              //Потом удалить!!
-        throw std::runtime_error("Command buffer is not initialized!");
-    }
 
+    updateUniformBuffer(currentFrame);
+
+
+    VkCommandBuffer commandBuffer = commandManager_.getCommandBuffer();
+    
     // Подготавливаем командный буфер
     vkResetCommandBuffer(commandManager_.getCommandBuffer(), 0);
     commandManager_.recordCommandBuffer(commandManager_.getCommandBuffer(), imageIndex,
                              bufferManager_.getVertexBuffer(), bufferManager_.getIndexBuffer());
+
 
     // Настраиваем информацию для отправки команд
     VkSubmitInfo submitInfo{};
@@ -110,4 +97,18 @@ void VulkanRenderer::drawFrame() {
 
     // Отображаем кадр
     vkQueuePresentKHR(swapChainManager_.getPresentQueue(), &presentInfo);
+}
+void VulkanRenderer::updateUniformBuffer(uint32_t currentImage) {
+    static auto startTime = std::chrono::high_resolution_clock::now();
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+    UniformBufferObject ubo{};
+    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.proj = glm::perspective(glm::radians(45.0f), swapChainManager_.getSwapChainExtent().width / (float) swapChainManager_.getSwapChainExtent().height, 0.1f, 10.0f);
+    ubo.proj[1][1] *= -1;
+
+    memcpy(bufferManager_.getUniformBuffersMapped()[currentImage], &ubo, sizeof(ubo));
 }

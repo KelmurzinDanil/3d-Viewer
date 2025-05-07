@@ -86,7 +86,8 @@ void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t
 
     vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
-    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(BufferManager::indices.size()), 1, 0, 0, 0);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineManager_.getLayout(), 0, 1, &pipelineManager_.getDescriptorSets()[currentFrame_], 0, nullptr);
+    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Constants::indices.size()), 1, 0, 0, 0);
     
     vkCmdEndRenderPass(commandBuffer);
 

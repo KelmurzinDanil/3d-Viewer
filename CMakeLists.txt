@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME}
     src/core/PipelineManager.cpp
     src/core/BufferManager.cpp
     src/core/Vertex.cpp
+    src/core/Constants.cpp
 )
 
 # Определение макроса SHADER_DIR как строки

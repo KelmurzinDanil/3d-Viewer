@@ -6,6 +6,7 @@
 #include "BufferManager.hpp"
 #include "SwapChainManager.hpp"
 #include "PipelineManager.hpp"
+#include "Constants.hpp"
 
 class CommandManager {
 public:

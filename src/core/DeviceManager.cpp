@@ -130,6 +130,11 @@ bool DeviceManager::isDeviceSuitable(VkPhysicalDevice device) {
         swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
     }
 
+    VkPhysicalDeviceFeatures supportedFeatures;
+    vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+    if (!supportedFeatures.vertexPipelineStoresAndAtomics) {
+        return false;
+    }
     // Устройство считается подходящим, если:
     // 1. Найдены все необходимые семейства очередей
     // 2. Поддерживаются необходимые расширения
