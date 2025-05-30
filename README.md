@@ -24,7 +24,7 @@ make run
 
 # Очистка проекта
 make clean
-
+```
 ### Вручную
 
 mkdir build
