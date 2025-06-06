@@ -11,10 +11,12 @@
 
 class BufferManager {
     public:
+        friend class TextureManager;
         BufferManager(DeviceManager& deviceManager, VkCommandPool commandPool, SwapChainManager& swapChainManager);
 
         VkBuffer getIndexBuffer() const {return indexBuffer.get();}
         VkBuffer getVertexBuffer() const {return vertexBuffer.get();}
+
 
         const std::vector<void*>& getUniformBuffersMapped() const;
         const std::vector<VkBufferPtr>& getUniformBuffers() const;
@@ -43,6 +45,11 @@ class BufferManager {
         void createVertexBuffer();
         void createIndexBuffer();
         void createUniformBuffers();
+
+        VkCommandBuffer beginSingleTimeCommands();
+        void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+        void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+        void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
             VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

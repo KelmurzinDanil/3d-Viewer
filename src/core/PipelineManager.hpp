@@ -14,7 +14,9 @@ class PipelineManager {
 
         void createDescriptorSetLayout();   
         void createDescriptorPool(); 
-        void createDescriptorSets(const std::vector<VkBufferPtr>& uniformBuffers);
+        void createDescriptorSets(const std::vector<VkBufferPtr>& uniformBuffers,
+                                    VkSampler textureSampler,
+                                    VkImageView textureImageView);
 
         VkPipelineLayout getLayout() const { return pipelineLayout_.get(); }
         VkPipeline getGraphicsPipeline() const { return graphicsPipeline_.get(); }
@@ -30,7 +32,7 @@ class PipelineManager {
 
         DeviceManager& deviceManager_;
         SwapChainManager& swapChainManager_;
-        
+
         VkPipelineLayoutPtr pipelineLayout_;
         VkPipelinePtr graphicsPipeline_;
     };

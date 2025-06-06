@@ -53,7 +53,8 @@ void DeviceManager::createLogicalDevice() {
 
     // Определяем функциональность устройства
     VkPhysicalDeviceFeatures deviceFeatures{};
-
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
+    
     // Информация о создании логического устройства
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -97,6 +98,7 @@ QueueFamilyIndices DeviceManager::findQueueFamilies(VkPhysicalDevice device) {
         }
 
         VkBool32 presentSupport = false;
+        //Возвращает bool. Поддерживает ли поток этот surface
         vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surfaceManager_.surface(), &presentSupport);
 
         if (presentSupport) {

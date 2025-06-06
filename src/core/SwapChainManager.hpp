@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <vector>
 #include <algorithm>
 #include <limits>
@@ -10,6 +11,7 @@
 
 
 class SwapChainManager{
+    friend class TextureManager;
     public:
         SwapChainManager(const SwapChainManager&) = delete;
         SwapChainManager& operator=(const SwapChainManager&) = delete;
@@ -20,30 +22,38 @@ class SwapChainManager{
         //const std::vector<VkFramebuffer>& getFramebuffers() const { return swapChainFramebuffers; }
         VkExtent2D getExtent() const { return swapChainExtent; }
         VkQueue getGraphicsQueue() const {
-            if (!graphicsQueue) { //Потом удалить!!
-                throw std::runtime_error("Graphics queue not initialized!");
-            }
             return graphicsQueue;
         }
         
         VkQueue getPresentQueue() const {
-            if (!presentQueue) { //Потом удалить!!
-                throw std::runtime_error("Present queue not initialized!");
-            }
             return presentQueue;
         }
+        void setDepthImageView(VkImageViewPtr depthImgView) { depthImageView = std::move(depthImgView); }
+        VkImageView getDepthImageView() const {return depthImageView.get(); }
 
         VkExtent2D getSwapChainExtent() const { return swapChainExtent;}
 
-        VkSwapchainKHRPtr swapChain;    
+        VkSwapchainKHR getSwapChain() const { return swapChain.get();}
+        VkRenderPass getRenderPass() const { return renderPass.get();}
+        VkImageViewPtr createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 
-        VkRenderPassPtr renderPass;
-
+        void createImage(uint32_t width,
+                    uint32_t height,
+                    VkFormat format,
+                    VkImageTiling tiling,
+                    VkImageUsageFlags usage,
+                    VkMemoryPropertyFlags properties,
+                    VkImagePtr& image,
+                    VkDeviceMemoryPtr& imageMemory);
+                    
     private:
         DeviceManager& deviceManager;
         SurfaceManager& surfaceManager;
         WindowManager& windowManager;
         
+        VkSwapchainKHRPtr swapChain;    
+        VkRenderPassPtr renderPass;
+
         VkQueue graphicsQueue;                 
         VkQueue presentQueue;                  
 
@@ -52,11 +62,17 @@ class SwapChainManager{
         VkExtent2D swapChainExtent;
         std::vector<VkImageViewPtr> swapChainImageViews;
 
+        VkImageViewPtr depthImageView;
+        VkImagePtr depthImage;
+        VkDeviceMemoryPtr depthImageMemory;
+
+        void createDepthResources();
         void createSwapChain();
         void recreateSwapChain();
         void createImageViews();
         void createFramebuffers();
         void createRenderPass();
+        
 
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& modes);

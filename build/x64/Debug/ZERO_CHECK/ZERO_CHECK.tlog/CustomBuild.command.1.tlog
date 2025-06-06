@@ -1,6 +1,6 @@
 ^C:\USERS\ДАНИЛ\PROGA\C++\3D-VIEWER\BUILD\CMAKEFILES\267999DF8C9CFEA90D1F28F02D49DCC4\GENERATE.STAMP.RULE
 setlocal
-C:\msys64\ucrt64\bin\cmake.exe -SC:/Users/Данил/Proga/C++/3d-Viewer -BC:/Users/Данил/Proga/C++/3d-Viewer/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Данил/Proga/C++/3d-Viewer/build/VulkanApp.sln
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Данил/Proga/C++/3d-Viewer -BC:/Users/Данил/Proga/C++/3d-Viewer/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Данил/Proga/C++/3d-Viewer/build/VulkanApp.sln
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

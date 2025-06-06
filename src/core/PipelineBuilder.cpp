@@ -11,7 +11,7 @@ PipelineBuilder::PipelineBuilder(VkDevice device, VkRenderPass renderPass)
         multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
         colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
         dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-       
+        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     }
 
 PipelineBuilder& PipelineBuilder::setShaders(const std::string& vertPath, const std::string& fragPath) {
@@ -144,6 +144,18 @@ PipelineBuilder& PipelineBuilder::setVertexInfo(){
 
     return *this;
 }
+PipelineBuilder& PipelineBuilder::setDepth(){
+    depthStencil.depthTestEnable = VK_TRUE;
+    depthStencil.depthWriteEnable = VK_TRUE;
+    depthStencil.depthCompareOp = VK_COMPARE_OP_LESS; // придерживаемся правила, что чем меньше глубина, тем ближе, поэтому глубина новых фрагментов должна быть меньше.
+    depthStencil.depthBoundsTestEnable = VK_FALSE;
+    depthStencil.minDepthBounds = 0.0f; // Optional
+    depthStencil.maxDepthBounds = 1.0f; // Optional
+    depthStencil.stencilTestEnable = VK_FALSE;
+    depthStencil.front = {}; // Optional
+    depthStencil.back = {}; // Optional
+    return *this;
+}
 
 
 
@@ -162,6 +174,7 @@ VkPipelinePtr PipelineBuilder::build() {
     pipelineInfo.pDynamicState = &dynamicState;
     pipelineInfo.layout = pipelineLayout;
     pipelineInfo.renderPass = renderPass;
+    pipelineInfo.pDepthStencilState = &depthStencil;
     pipelineInfo.subpass = 0;
 
     VkPipeline rawPipeline;

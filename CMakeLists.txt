@@ -7,6 +7,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+
 if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
@@ -32,8 +33,14 @@ add_executable(${PROJECT_NAME}
     src/core/BufferManager.cpp
     src/core/Vertex.cpp
     src/core/Constants.cpp
+    src/core/TextureManager.cpp
 )
 
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/textures
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/textures
+)
 # Определение макроса SHADER_DIR как строки
 target_compile_definitions(${PROJECT_NAME} PRIVATE 
     SHADER_DIR="${CMAKE_CURRENT_BINARY_DIR}/shaders"
@@ -44,6 +51,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${PROJECT_SOURCE_DIR}/External/GLEW/glew-2.1.0/include
     "C:/VulkanSDK/1.4.309.0/Include"
     ${PROJECT_SOURCE_DIR}/External/glm
+    ${PROJECT_SOURCE_DIR}/External/stb_image
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

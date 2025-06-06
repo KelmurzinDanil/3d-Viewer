@@ -23,6 +23,7 @@ public:
             .setDynamicState(dynamicStates)
             .setMultisampling()
             .setRasterizer()
+            .setDepth()
             .build();
     }
 };

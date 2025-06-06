@@ -59,6 +59,7 @@ namespace VulkanUtils {
         return shaderModule;
     }
 
+    
     inline uint32_t findMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties) {
         //Структура VkPhysicalDeviceMemoryProperties содержит два массива memoryTypes и memoryHeaps
         VkPhysicalDeviceMemoryProperties memProperties;
@@ -75,7 +76,32 @@ namespace VulkanUtils {
         throw std::runtime_error("failed to find suitable memory type!");
     }
 
-    
+    inline VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling,
+         VkFormatFeatureFlags features, VkPhysicalDevice physicalDevice) {
+        for (VkFormat format : candidates) {
+            // linearTilingFeatures - Варианты использования, поддерживаемые линейной мозаикой
+            // ptimalTilingFeatures - Варианты использования, поддерживаемые оптимальной мозаичной раскладкой 
+            VkFormatProperties props;
+            vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+            if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+                return format;
+            } else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+                return format;
+            }
+        }
+        throw std::runtime_error("failed to find supported format!");
+    }
+    inline VkFormat findDepthFormat(VkPhysicalDevice physicalDevice) {
+        return findSupportedFormat(
+            {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, // Кандидаты 
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT,
+            physicalDevice
+        );
+    }
+    inline bool hasStencilComponent(VkFormat format) {
+        return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+    }
 }
 
 /** 1. Параметр typeFilter будет использоваться для указания битового поля подходящих типов памяти.

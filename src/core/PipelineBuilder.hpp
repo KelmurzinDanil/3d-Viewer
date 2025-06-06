@@ -44,6 +44,7 @@ public:
 
     PipelineBuilder& setVertexInfo();
 
+    PipelineBuilder& setDepth();
 
 
     // Создает и возвращает готовый конвейер
@@ -51,7 +52,7 @@ public:
 
 private:
     VkVertexInputBindingDescription bindingDescription_; // Store binding
-    std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions_; // Store attributes
+    std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions_; // Store attributes
 
     VkDevice device; 
     VkRenderPass renderPass;
@@ -68,6 +69,7 @@ private:
     VkPipelineLayout pipelineLayout; // Макет конвейера
     VkPipelineColorBlendAttachmentState colorBlendAttachment{}; // Состояние смешивания для вложений
     VkPipelineDepthStencilStateCreateInfo depthStencil{};
+    
     
     std::vector<VkDynamicState> dynamicStates_;
 };

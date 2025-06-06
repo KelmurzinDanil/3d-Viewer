@@ -64,6 +64,9 @@ using VkInstancePtr = std::unique_ptr<VkInstance_T,
 using VkDevicePtr = std::unique_ptr<VkDevice_T, 
     VulkanDeleter<VkDevice_T, vkDestroyDevice>>;
 
+using VkImagePtr = std::unique_ptr<VkImage_T, 
+    VulkanDeleter<VkImage_T, vkDestroyImage, VkDevice>>;
+
 using VkSurfaceKHRPtr = std::unique_ptr<VkSurfaceKHR_T, 
     VulkanDeleter<VkSurfaceKHR_T, vkDestroySurfaceKHR, VkInstance>>;
 
@@ -91,6 +94,9 @@ using VkFencePtr = std::unique_ptr<VkFence_T,
 using VkImageViewPtr = std::unique_ptr<VkImageView_T, 
     VulkanDeleter<VkImageView_T, vkDestroyImageView, VkDevice>>;
 
+using VkSamplerPtr =  std::unique_ptr<VkSampler_T,
+    VulkanDeleter<VkSampler_T, vkDestroySampler, VkDevice>>;
+    
 using VkFramebufferPtr = std::unique_ptr<VkFramebuffer_T, 
     VulkanDeleter<VkFramebuffer_T, vkDestroyFramebuffer, VkDevice>>;
 

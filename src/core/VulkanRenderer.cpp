@@ -8,6 +8,7 @@ VulkanRenderer::VulkanRenderer(WindowManager& windowManager,
                                SurfaceManager& surfaceManager,
                                CommandManager& commandManager,
                                BufferManager& bufferManager,
+                               TextureManager& textureManager,
                                bool enableValidationLayers)
     : windowManager_(windowManager),
       deviceManager_(deviceManager),
@@ -17,15 +18,19 @@ VulkanRenderer::VulkanRenderer(WindowManager& windowManager,
       surfaceManager_(surfaceManager),
       commandManager_(commandManager),
       bufferManager_(bufferManager),
+      textureManager_(textureManager),
       enableValidationLayers_(enableValidationLayers),
       renderPass(nullptr, VulkanDeleter<VkRenderPass_T, vkDestroyRenderPass, VkDevice>(nullptr)),
       graphicsPipeline(nullptr, VulkanDeleter<VkPipeline_T, vkDestroyPipeline, VkDevice>(nullptr))
+
        {
         pipelineManager_.createDescriptorSetLayout();
         pipelineManager_.createPipelineLayout();
         pipelineManager_.createGraphicsPipeline();
         pipelineManager_.createDescriptorPool();
-        pipelineManager_.createDescriptorSets(bufferManager_.getUniformBuffers());
+        pipelineManager_.createDescriptorSets(bufferManager_.getUniformBuffers(),
+                                                textureManager_.getTextureSampler(),
+                                                textureManager_.getTextureImageView());
       }
 
 void VulkanRenderer::drawFrame() {
@@ -43,7 +48,7 @@ void VulkanRenderer::drawFrame() {
     uint32_t imageIndex;
 
     VkResult result = vkAcquireNextImageKHR(deviceManager_.device(), 
-    swapChainManager_.swapChain.get(), 
+    swapChainManager_.getSwapChain(), 
     UINT64_MAX, 
     rawImageAvailableSemaphore, 
     VK_NULL_HANDLE, 
@@ -90,7 +95,7 @@ void VulkanRenderer::drawFrame() {
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
 
-    VkSwapchainKHR swapChains[] = {swapChainManager_.swapChain.get()};
+    VkSwapchainKHR swapChains[] = {swapChainManager_.getSwapChain()};
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapChains;
     presentInfo.pImageIndices = &imageIndex;

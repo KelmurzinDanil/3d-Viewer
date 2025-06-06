@@ -32,6 +32,11 @@ void Application::initializeManagers() {
     bufferManager = std::make_unique<BufferManager>(
         *deviceManager, commandManager->getCommandPool(), *swapChainManager
     );
+    textureManager = std::make_unique<TextureManager>(
+            *bufferManager, 
+            *deviceManager, 
+            *swapChainManager
+        );
 
     
 }
@@ -46,6 +51,7 @@ void Application::initializeRenderer() {
         *surfaceManager,
         *commandManager,
         *bufferManager,
+        *textureManager, 
         enableValidationLayers
     );
 }
@@ -56,6 +62,7 @@ void Application::cleanup() {
     }
 
     renderer.reset();
+    textureManager.reset();
     bufferManager.reset();
     commandManager.reset();
     swapChainManager.reset();

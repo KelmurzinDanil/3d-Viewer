@@ -3,7 +3,10 @@
 SwapChainManager::SwapChainManager(DeviceManager& deviceManager, SurfaceManager& surfaceManager, WindowManager& windowManager) 
 : deviceManager(deviceManager),surfaceManager(surfaceManager),windowManager(windowManager),
   swapChain(nullptr, VulkanDeleter<VkSwapchainKHR_T, vkDestroySwapchainKHR, VkDevice>(deviceManager.device())),
-  renderPass(nullptr, VulkanDeleter<VkRenderPass_T, vkDestroyRenderPass, VkDevice>(nullptr))
+  renderPass(nullptr, VulkanDeleter<VkRenderPass_T, vkDestroyRenderPass, VkDevice>(nullptr)),
+  depthImageView(nullptr, VulkanDeleter<VkImageView_T, vkDestroyImageView, VkDevice>(nullptr)),
+depthImage(nullptr, VulkanDeleter<VkImage_T, vkDestroyImage, VkDevice>(nullptr)),
+depthImageMemory(nullptr, VulkanDeleter<VkDeviceMemory_T, vkFreeMemory, VkDevice>(nullptr))
   {
     createSwapChain();
 
@@ -14,6 +17,7 @@ SwapChainManager::SwapChainManager(DeviceManager& deviceManager, SurfaceManager&
     
     createRenderPass();
     createImageViews();
+    createDepthResources();
     createFramebuffers();
 }
 
@@ -38,17 +42,17 @@ void SwapChainManager::createSwapChain() {
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = extent;
     createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // <- Указываем, что будет храниться внутри swapchain
 
     QueueFamilyIndices indices = deviceManager.findQueueFamilies(deviceManager.physicalDevice());
     uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
     if (indices.graphicsFamily != indices.presentFamily) {
-        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT; // <- Потоки могут обмениваться информацией(Отрисовка и вывод изображения)
         createInfo.queueFamilyIndexCount = 2;
         createInfo.pQueueFamilyIndices = queueFamilyIndices;
     } else {
-        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE; // <- Работает только 1 поток
     }
 
     createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
@@ -73,34 +77,35 @@ void SwapChainManager::createSwapChain() {
     swapChainImageFormat = surfaceFormat.format;
     swapChainExtent = extent;
 }
+
+VkImageViewPtr SwapChainManager::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) {
+        VkImageViewCreateInfo viewInfo{};
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = image;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = format;
+        viewInfo.subresourceRange.aspectMask = aspectFlags;
+        viewInfo.subresourceRange.baseMipLevel = 0;
+        viewInfo.subresourceRange.levelCount = 1;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount = 1;
+
+        VkImageView rawView;
+        if (vkCreateImageView(deviceManager.device(), &viewInfo, nullptr, &rawView) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create image views!");
+        }
+
+        return VkImageViewPtr(
+        rawView,
+        VulkanDeleter<VkImageView_T, vkDestroyImageView, VkDevice>(deviceManager.device()));
+    }
 void SwapChainManager::createImageViews() {
     swapChainImageViews.clear();
     swapChainImageViews.reserve(swapChainImages.size());
 
     for (size_t i = 0; i < swapChainImages.size(); i++) {
-        VkImageViewCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        createInfo.image = swapChainImages[i];
-        createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        createInfo.format = swapChainImageFormat;
-        createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-        createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        createInfo.subresourceRange.baseMipLevel = 0;
-        createInfo.subresourceRange.levelCount = 1;
-        createInfo.subresourceRange.baseArrayLayer = 0;
-        createInfo.subresourceRange.layerCount = 1;
-
-        VkImageView rawView;
-        if (vkCreateImageView(deviceManager.device(), &createInfo, nullptr, &rawView) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create image views!");
-        }
         swapChainImageViews.emplace_back(
-            rawView,
-            VulkanDeleter<VkImageView_T, vkDestroyImageView, VkDevice>(deviceManager.device())
-        );
+            createImageView(swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT));
     }
 
 }
@@ -116,12 +121,12 @@ VkSurfaceFormatKHR SwapChainManager::chooseSwapSurfaceFormat(const std::vector<V
 
 VkPresentModeKHR SwapChainManager::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
     for (const auto& availablePresentMode : availablePresentModes) {
-        if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+        if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) { //< - лучший мод, но не поддерживается всеми видеокартами
             return availablePresentMode;
         }
     }
 
-    return VK_PRESENT_MODE_FIFO_KHR;
+    return VK_PRESENT_MODE_FIFO_KHR; // < - Если ничего не подошло
 }
 
 VkExtent2D SwapChainManager::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
@@ -138,39 +143,57 @@ VkExtent2D SwapChainManager::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& ca
 }
 
 void SwapChainManager::createRenderPass() {
+
+    VkAttachmentDescription depthAttachment{};
+    depthAttachment.format = VulkanUtils::findDepthFormat(deviceManager.physicalDevice());
+    depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    VkAttachmentReference depthAttachmentRef{};
+    depthAttachmentRef.attachment = 1;
+    depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = swapChainImageFormat;
-    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT; //Мультисемплинг
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;//Очищаем буфер до рендера
+    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;// Сохраняем в память после рендера результат
+    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // Трафарет, не используем 
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; // Неизвестно начальное состояние изображения 
+    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; // Используем для вывода на экран
 
     VkAttachmentReference colorAttachmentRef{};
     colorAttachmentRef.attachment = 0;
-    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; //Работаем с colorAttachment
 
     VkSubpassDescription subpass{};
-    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS; // Работаем с графическим конвеером 
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef;
+    subpass.pColorAttachments = &colorAttachmentRef;
+    subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
-    VkSubpassDependency dependency{};
+    
+    VkSubpassDependency dependency{}; //Синхронизация 
     dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
     dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     dependency.srcAccessMask = 0;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
+    std::array<VkAttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
     VkRenderPassCreateInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassInfo.attachmentCount = 1;
-    renderPassInfo.pAttachments = &colorAttachment;
+    renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size()); 
+    renderPassInfo.pAttachments = attachments.data();
     renderPassInfo.subpassCount = 1;
-    renderPassInfo.pSubpasses = &subpass;
+    renderPassInfo.pSubpasses = &subpass; // Подзадачи 
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
@@ -183,20 +206,86 @@ void SwapChainManager::createRenderPass() {
          vkDestroyRenderPass, VkDevice>(deviceManager.device()));
 }
 
+void SwapChainManager::createImage(uint32_t width,
+                                uint32_t height,
+                                VkFormat format,
+                                VkImageTiling tiling,
+                                VkImageUsageFlags usage,
+                                VkMemoryPropertyFlags properties,
+                                VkImagePtr& image,
+                                VkDeviceMemoryPtr& imageMemory) 
+{
+
+    VkImageCreateInfo imageInfo{};
+    imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageInfo.imageType = VK_IMAGE_TYPE_2D;
+    imageInfo.extent.width = width;
+    imageInfo.extent.height = height;
+    imageInfo.extent.depth = 1;
+    imageInfo.mipLevels = 1;
+    imageInfo.arrayLayers = 1;
+    imageInfo.format = format;
+    imageInfo.tiling = tiling;
+    imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    imageInfo.usage = usage;
+    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    VkImage rawImage;
+    if (vkCreateImage(deviceManager.device(), &imageInfo, nullptr, &rawImage) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create image!");
+    }
+    image.reset(rawImage); // Передаем владение умному указателю
+
+
+    VkMemoryRequirements memRequirements;
+    vkGetImageMemoryRequirements(deviceManager.device(), image.get(), &memRequirements);
+
+    VkMemoryAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = memRequirements.size;
+    allocInfo.memoryTypeIndex = VulkanUtils::findMemoryType(deviceManager.physicalDevice(), memRequirements.memoryTypeBits, properties);
+
+    VkDeviceMemory rawMemory;
+    if (vkAllocateMemory(deviceManager.device(), &allocInfo, nullptr, &rawMemory) != VK_SUCCESS) {
+        throw std::runtime_error("failed to allocate image memory!");
+    }
+    imageMemory.reset(rawMemory);
+
+    
+    vkBindImageMemory(deviceManager.device(), image.get(), imageMemory.get(), 0);
+}
+
+void SwapChainManager::createDepthResources() {
+    VkFormat depthFormat = VulkanUtils::findDepthFormat(deviceManager.physicalDevice());
+
+    createImage(swapChainExtent.width,
+                swapChainExtent.height,
+                depthFormat,
+                VK_IMAGE_TILING_OPTIMAL,
+                VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                depthImage,
+                depthImageMemory);
+    depthImageView = createImageView(depthImage.get(), depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+}
+
 void SwapChainManager::createFramebuffers() {
     swapChainFramebuffers.clear();
     swapChainFramebuffers.reserve(swapChainImageViews.size());
 
     for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-        VkImageView attachments[] = {
-            swapChainImageViews[i].get()
+
+        std::array<VkImageView, 2> attachments = {
+            swapChainImageViews[i].get(),
+            depthImageView.get()
         };
 
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = renderPass.get();
-        framebufferInfo.attachmentCount = 1;
-        framebufferInfo.pAttachments = attachments;
+        framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+        framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = swapChainExtent.width;
         framebufferInfo.height = swapChainExtent.height;
         framebufferInfo.layers = 1;
@@ -210,4 +299,20 @@ void SwapChainManager::createFramebuffers() {
             rawFramebuffer,
             VulkanDeleter<VkFramebuffer_T, vkDestroyFramebuffer, VkDevice>(deviceManager.device()));
         }
+}
+void SwapChainManager::recreateSwapChain() {
+    int width = 0, height = 0;
+    while (width == 0 || height == 0) {
+        glfwGetFramebufferSize(windowManager.window(), &width, &height);
+        glfwWaitEvents();
+    }
+
+    vkDeviceWaitIdle(deviceManager.device());
+
+    //cleanupSwapChain();
+
+    createSwapChain();
+    createImageViews();
+    createDepthResources();
+    createFramebuffers();
 }

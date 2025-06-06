@@ -37,6 +37,7 @@ private:
     std::unique_ptr<PipelineManager> pipelineManager;
     std::unique_ptr<CommandManager> commandManager;
     std::unique_ptr<BufferManager> bufferManager;
+    std::unique_ptr<TextureManager> textureManager;
     std::unique_ptr<VulkanRenderer> renderer;
 };
 

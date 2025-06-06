@@ -9,6 +9,7 @@
 #include "PipelineManager.hpp"
 #include "Vertex.hpp"
 #include "BufferManager.hpp"
+#include "TextureManager.hpp"
 #include <memory>
 #include <chrono>
 #include <glm/glm.hpp>
@@ -26,7 +27,7 @@ public:
 
     VulkanRenderer(WindowManager& windowManager, DeviceManager& deviceManager,
          SwapChainManager& swapChainManager, PipelineManager& pipelineManager, InstanceManager& instanceManager, SurfaceManager& surfaceManager,
-         CommandManager& commandManager, BufferManager& bufferManager,
+         CommandManager& commandManager, BufferManager& bufferManager, TextureManager& textureManager,
           bool enableValidationLayers);
 
     /**
@@ -48,6 +49,7 @@ private:
     CommandManager& commandManager_;
     WindowManager& windowManager_;
     BufferManager& bufferManager_;
+    TextureManager& textureManager_;
   
     bool enableValidationLayers_;///< Флаг использования слоев валидации
 
@@ -57,7 +59,6 @@ private:
     VkPipelinePtr graphicsPipeline;
     std::vector<VkFramebufferPtr> swapChainFramebuffers;
     
-
     
     std::unique_ptr<PipelineStrategy> pipelineStrategy;
 };
