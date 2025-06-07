@@ -38,6 +38,12 @@ add_executable(${PROJECT_NAME}
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/model
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/model
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/textures
     $<TARGET_FILE_DIR:${PROJECT_NAME}>/textures
 )
@@ -52,6 +58,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "C:/VulkanSDK/1.4.309.0/Include"
     ${PROJECT_SOURCE_DIR}/External/glm
     ${PROJECT_SOURCE_DIR}/External/stb_image
+    ${PROJECT_SOURCE_DIR}/External/tiny_obj_loader
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

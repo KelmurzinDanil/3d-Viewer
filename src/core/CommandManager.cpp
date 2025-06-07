@@ -87,13 +87,10 @@ void CommandManager::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-    if(pipelineManager_.getDescriptorSets()[currentFrame_] == nullptr){ //!!
-        std::cout << "Ошибочка 2" << std::endl;
-    }
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineManager_.getLayout(), 0, 1, &pipelineManager_.getDescriptorSets()[currentFrame_], 0, nullptr);
-    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(Constants::indices.size()), 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
     
     vkCmdEndRenderPass(commandBuffer);
 

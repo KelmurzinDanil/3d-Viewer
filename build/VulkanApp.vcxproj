@@ -86,7 +86,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -105,10 +105,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;SHADER_DIR=\"C:/Users/Данил/Proga/C++/3d-Viewer/build/shaders\";GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;UNICODE;_UNICODE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -116,8 +116,17 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>	</Message>
       <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/model C:/Users/Данил/Proga/C++/3d-Viewer/build/Debug/model
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/textures C:/Users/Данил/Proga/C++/3d-Viewer/build/Debug/textures
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
@@ -143,7 +152,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -163,10 +172,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;SHADER_DIR=\"C:/Users/Данил/Proga/C++/3d-Viewer/build/shaders\";GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;UNICODE;_UNICODE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -174,8 +183,17 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>	</Message>
       <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/model C:/Users/Данил/Proga/C++/3d-Viewer/build/Release/model
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/textures C:/Users/Данил/Proga/C++/3d-Viewer/build/Release/textures
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
@@ -201,7 +219,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -221,10 +239,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;SHADER_DIR=\"C:/Users/Данил/Proga/C++/3d-Viewer/build/shaders\";GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;UNICODE;_UNICODE;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -232,8 +250,17 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>	</Message>
       <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/model C:/Users/Данил/Proga/C++/3d-Viewer/build/MinSizeRel/model
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/textures C:/Users/Данил/Proga/C++/3d-Viewer/build/MinSizeRel/textures
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
@@ -259,7 +286,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -278,10 +305,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;SHADER_DIR=\"C:/Users/Данил/Proga/C++/3d-Viewer/build/shaders\";GLM_FORCE_RADIANS;GLM_FORCE_DEPTH_ZERO_TO_ONE;UNICODE;_UNICODE;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Данил\Proga\C++\3d-Viewer\External\GLFW\glfw-3.4.bin.WIN32\include;C:\Users\Данил\Proga\C++\3d-Viewer\External\GLEW\glew-2.1.0\include;C:\VulkanSDK\1.4.309.0\Include;C:\Users\Данил\Proga\C++\3d-Viewer\External\glm;C:\Users\Данил\Proga\C++\3d-Viewer\External\stb_image;C:\Users\Данил\Proga\C++\3d-Viewer\External\tiny_obj_loader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -289,8 +316,17 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>	</Message>
       <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/model C:/Users/Данил/Proga/C++/3d-Viewer/build/RelWithDebInfo/model
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy_directory C:/Users/Данил/Proga/C++/3d-Viewer/textures C:/Users/Данил/Proga/C++/3d-Viewer/build/RelWithDebInfo/textures
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd

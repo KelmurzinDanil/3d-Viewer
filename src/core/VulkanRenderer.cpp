@@ -1,5 +1,6 @@
 #include "VulkanRenderer.hpp"
 
+
 VulkanRenderer::VulkanRenderer(WindowManager& windowManager, 
                                DeviceManager& deviceManager,
                                SwapChainManager& swapChainManager,

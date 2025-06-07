@@ -11,6 +11,7 @@ indexBufferMemory(nullptr, VulkanDeleter<VkDeviceMemory_T, vkFreeMemory, VkDevic
 vertexBuffer(nullptr, VulkanDeleter<VkBuffer_T, vkDestroyBuffer, VkDevice>(nullptr)),
 vertexBufferMemory(nullptr, VulkanDeleter<VkDeviceMemory_T, vkFreeMemory, VkDevice>(nullptr))
 {
+    loadModel();
     createVertexBuffer();
     createIndexBuffer();
     createUniformBuffers();
@@ -54,11 +55,11 @@ void BufferManager::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
 }
 
 void BufferManager::createIndexBuffer() {
-    if (Constants::indices.empty()) {
+    if (indices.empty()) {
         throw std::runtime_error("Index data is empty!");
     }
 
-    VkDeviceSize bufferSize = sizeof(Constants::indices[0]) * Constants::indices.size();
+    VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 
     // Создание staging буфера
     VkBuffer stagingBuffer;
@@ -74,7 +75,7 @@ void BufferManager::createIndexBuffer() {
     // Заполнение staging буфера
     void* data;
     vkMapMemory(deviceManager_.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, Constants::indices.data(), static_cast<size_t>(bufferSize));
+    memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
     vkUnmapMemory(deviceManager_.device(), stagingBufferMemory);
 
     // Создание основного индексного буфера

@@ -8,7 +8,8 @@
                 "${workspaceFolder}/External/GLEW/glew-2.1.0/include",
                 "C:/VulkanSDK/1.4.309.0/Include",
                 "${workspaceFolder}/External/glm",
-                "${workspaceFolder}/External/stb_image" 
+                "${workspaceFolder}/External/stb_image",
+                "${workspaceFolder}/External/tiny_obj_loader"
             ],
             "defines": [
                 "GLFW_INCLUDE_VULKAN",

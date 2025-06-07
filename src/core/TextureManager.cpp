@@ -21,7 +21,7 @@ void TextureManager::createTextureImage(){
 
     int texWidth, texHeight, texChannels;
     stbi_set_flip_vertically_on_load(true);
-    stbi_uc* pixels = stbi_load("textures/s.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc* pixels = stbi_load(TEXTURE_PATH.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     stbi_set_flip_vertically_on_load(false);
     VkDeviceSize imageSize = texWidth * texHeight * 4;
     if (!pixels) {
