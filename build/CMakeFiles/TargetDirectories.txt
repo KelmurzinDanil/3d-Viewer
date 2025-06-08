@@ -1,3 +1,0 @@
-C:/Users/Данил/Proga/C++/3d-Viewer/build/CMakeFiles/VulkanApp.dir
-C:/Users/Данил/Proga/C++/3d-Viewer/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/Данил/Proga/C++/3d-Viewer/build/CMakeFiles/ZERO_CHECK.dir
