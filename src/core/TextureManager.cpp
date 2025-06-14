@@ -37,9 +37,9 @@ void TextureManager::createTextureImage(){
         stagingBufferMemory
     );
 
-    //Указывает на область памяти GPU, доступную для записи с CPU.
+   
     void* data;
-    //Заполняет data, используя staging-буфер, созданный выше
+    //Заполняет data, используя staging-буфер
     vkMapMemory(deviceManager_.device(), stagingBufferMemory, 0, imageSize, 0, &data);
     //Копирует данные pixels в data
     memcpy(data, pixels, static_cast<size_t>(imageSize));

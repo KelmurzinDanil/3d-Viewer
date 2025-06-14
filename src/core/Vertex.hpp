@@ -16,10 +16,10 @@ const std::string TEXTURE_PATH = "textures/viking.png";
 
 void loadModel();
 
-struct UniformBufferObject {
-    glm::mat4 model;
-    glm::mat4 view;
-    glm::mat4 proj;
+struct UniformBufferObject { // не больше 256 байта
+    glm::mat4 model; //64 байта
+    glm::mat4 view; // 64 байта
+    glm::mat4 proj; // 64 байта
 };
 
 struct Vertex{

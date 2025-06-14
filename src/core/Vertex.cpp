@@ -16,21 +16,25 @@ void loadModel() {
         throw std::runtime_error(warn + err);
     }
 
-    std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+    std::unordered_map<Vertex, uint32_t> uniqueVertices{}; // Для устранения дубликатов вершин
 
     for (const auto& shape : shapes) {
         for (const auto& index : shape.mesh.indices) {
             Vertex vertex{};
 
+            // Индекс содержит:
+            //   index.vertex_index  - позиция
+            //   index.texcoord_index - UV
+
             vertex.pos = {
-                attrib.vertices[3 * index.vertex_index + 0],
-                attrib.vertices[3 * index.vertex_index + 1],
-                attrib.vertices[3 * index.vertex_index + 2]
+                attrib.vertices[3 * index.vertex_index + 0], //x
+                attrib.vertices[3 * index.vertex_index + 1], //y
+                attrib.vertices[3 * index.vertex_index + 2]  //z
             };
 
             vertex.texCoord = {
-                attrib.texcoords[2 * index.texcoord_index + 0],
-                1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+                attrib.texcoords[2 * index.texcoord_index + 0], //U
+                1.0f - attrib.texcoords[2 * index.texcoord_index + 1] //V
             };
 
             vertex.color = {1.0f, 1.0f, 1.0f};
@@ -44,7 +48,7 @@ void loadModel() {
         }
     }
 }
-VkVertexInputBindingDescription Vertex::getBindingDescription() {
+VkVertexInputBindingDescription Vertex::getBindingDescription() { // Описывает организацию данных в буфере вершин
     VkVertexInputBindingDescription bindingDescription{};
     /**Параметр binding указывает индекс привязки в массиве привязок.
      * Параметр stride указывает количество байтов от одной записи до следующей, 
@@ -57,7 +61,7 @@ VkVertexInputBindingDescription Vertex::getBindingDescription() {
     bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     return bindingDescription;
 }
-std::array<VkVertexInputAttributeDescription, 3> Vertex::getAttributeDescriptions() {
+std::array<VkVertexInputAttributeDescription, 3> Vertex::getAttributeDescriptions() { //Описывает отдельные атрибуты вершины (позиция, цвет, UV)
     std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
     /**Параметр binding сообщает Vulkan, из какого связывания поступают данные для каждой вершины.
      * Параметр location ссылается на директиву location ввода в вершинном шейдере.
@@ -77,6 +81,7 @@ std::array<VkVertexInputAttributeDescription, 3> Vertex::getAttributeDescription
     attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
     attributeDescriptions[1].offset = offsetof(Vertex, color);
 
+    // Texture Coordinates (Location 2)
     attributeDescriptions[2].binding = 0;
     attributeDescriptions[2].location = 2;
     attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;

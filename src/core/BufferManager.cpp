@@ -29,16 +29,16 @@ void BufferManager::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, Vk
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size; // Используем переданный размер
     bufferInfo.usage = usage; // Используем переданные флаги
-    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE; // Только для одной очереди
 
     if (vkCreateBuffer(deviceManager_.device(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create buffer!");
     }
 
     VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(deviceManager_.device(), buffer, &memRequirements);
+    vkGetBufferMemoryRequirements(deviceManager_.device(), buffer, &memRequirements); //  Определение требований к памяти
 
-    VkMemoryAllocateInfo allocInfo{};
+    VkMemoryAllocateInfo allocInfo{}; // Выделение видеопамяти
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = VulkanUtils::findMemoryType(
@@ -59,15 +59,16 @@ void BufferManager::createIndexBuffer() {
         throw std::runtime_error("Index data is empty!");
     }
 
-    VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+    VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size(); // Расчет размера буфера
 
     // Создание staging буфера
     VkBuffer stagingBuffer;
     VkDeviceMemory stagingBufferMemory;
     createBuffer(
         bufferSize,
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+        VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // Только для копирования
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | //HOST_VISIBLE: Доступна для CPU
+         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, //HOST_COHERENT: Автоматическая синхронизация (без ручного flush)
         stagingBuffer,
         stagingBufferMemory
     );
@@ -84,7 +85,7 @@ void BufferManager::createIndexBuffer() {
     createBuffer(
         bufferSize,
         VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, //Оптимальная GPU-память
         rawIndexBuffer,
         rawIndexBufferMemory
     );
@@ -220,7 +221,9 @@ void BufferManager::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
 
+    // Отправка в очередь
     vkQueueSubmit(swapChainManager_.getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+    // Ожидание завершения
     vkQueueWaitIdle(swapChainManager_.getGraphicsQueue());
 
     vkFreeCommandBuffers(deviceManager_.device(), commandPool_, 1, &commandBuffer);

@@ -22,8 +22,8 @@ void CommandManager::createCommandPool() {
 
     VkCommandPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-    poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT; //Можем использовать буфферы без их повторного выделения 
+    poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value(); // Поток на видюхе 
 
     VkCommandPool rawCommandPool;
     if (vkCreateCommandPool(deviceManager_.device(), &poolInfo, nullptr, &rawCommandPool) != VK_SUCCESS) {

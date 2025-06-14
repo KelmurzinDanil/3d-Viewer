@@ -67,7 +67,7 @@ PipelineBuilder& PipelineBuilder::setViewport(VkExtent2D extent) {
     viewportState.pScissors = &scissor;
     return *this;
 }
-PipelineBuilder& PipelineBuilder::setColorBlending() {
+PipelineBuilder& PipelineBuilder::setColorBlending() { //Смешивание цветов
     colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAttachment.blendEnable = VK_FALSE;
     
@@ -77,14 +77,14 @@ PipelineBuilder& PipelineBuilder::setColorBlending() {
     colorBlending.pAttachments = &colorBlendAttachment;
     return *this;
 }
-PipelineBuilder& PipelineBuilder::enableDepthTest(bool enable) {
+PipelineBuilder& PipelineBuilder::enableDepthTest(bool enable) { //Сравнение глубины текущего фрагмента с буфером глубины
     depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     depthStencil.depthTestEnable = enable ? VK_TRUE : VK_FALSE;
     depthStencil.depthWriteEnable = enable ? VK_TRUE : VK_FALSE;
     depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
     return *this;
 }
-PipelineBuilder& PipelineBuilder::enableBlending() {
+PipelineBuilder& PipelineBuilder::enableBlending() { // Включает альфа-смешивание final_color = src.rgba * src.alpha + dst.rgba * (1 - src.alpha)
     colorBlendAttachment.blendEnable = VK_TRUE;
     colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
     colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
@@ -97,10 +97,10 @@ PipelineBuilder& PipelineBuilder::enableBlending() {
 PipelineBuilder& PipelineBuilder::setRasterizer(){
     rasterizer.depthClampEnable = VK_FALSE;
     rasterizer.rasterizerDiscardEnable = VK_FALSE;
-    rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-    rasterizer.lineWidth = 1.0f;
-    rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-    rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    rasterizer.polygonMode = VK_POLYGON_MODE_FILL; // VK_POLYGON_MODE_LINE 
+    rasterizer.lineWidth = 1.0f; // Ширина линий VK_POLYGON_MODE_LINE
+    rasterizer.cullMode = VK_CULL_MODE_BACK_BIT; // Отрисовка в зависимости "видит" ли это камера
+    rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // Как идут грани(фронтальные и не фронтальные)
     rasterizer.depthBiasEnable = VK_FALSE;
     return *this;
 }
@@ -111,7 +111,7 @@ PipelineBuilder& PipelineBuilder::setMultisampling(){
     return *this;
 }
 
-PipelineBuilder& PipelineBuilder::setCullMode(VkCullModeFlags cullMode) {
+PipelineBuilder& PipelineBuilder::setCullMode(VkCullModeFlags cullMode) { //Границы
     rasterizer.cullMode = cullMode;
     rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
     rasterizer.lineWidth = 1.0f;
@@ -166,13 +166,13 @@ VkPipelinePtr PipelineBuilder::build() {
     pipelineInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
     pipelineInfo.pStages = shaderStages.data();
     pipelineInfo.pVertexInputState = &vertexInputInfo;
-    pipelineInfo.pInputAssemblyState = &inputAssembly;
-    pipelineInfo.pViewportState = &viewportState;
-    pipelineInfo.pRasterizationState = &rasterizer;
+    pipelineInfo.pInputAssemblyState = &inputAssembly; // как выводим геометрию(палки или треугольники)
+    pipelineInfo.pViewportState = &viewportState; //область отрисовки
+    pipelineInfo.pRasterizationState = &rasterizer; //Внутри  геометрии создаем "пиксели"
     pipelineInfo.pMultisampleState = &multisampling;
-    pipelineInfo.pColorBlendState = &colorBlending;
-    pipelineInfo.pDynamicState = &dynamicState;
-    pipelineInfo.layout = pipelineLayout;
+    pipelineInfo.pColorBlendState = &colorBlending; // Смешивание цветов (отключаем, используем только альфа-канал, он легче)
+    pipelineInfo.pDynamicState = &dynamicState; //Динамические штуки в сцене
+    pipelineInfo.layout = pipelineLayout; // Штука с push константами
     pipelineInfo.renderPass = renderPass;
     pipelineInfo.pDepthStencilState = &depthStencil;
     pipelineInfo.subpass = 0;

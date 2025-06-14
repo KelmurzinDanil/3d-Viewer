@@ -77,3 +77,5 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE _UNICODE)
 endif()
+
+add_subdirectory(tests)

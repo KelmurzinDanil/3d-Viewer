@@ -24,9 +24,9 @@ depthImageMemory(nullptr, VulkanDeleter<VkDeviceMemory_T, vkFreeMemory, VkDevice
 void SwapChainManager::createSwapChain() {
     SwapChainSupportDetails swapChainSupport = deviceManager.querySwapChainSupport(deviceManager.physicalDevice());
 
-    VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-    VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-    VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+    VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats); // Пространство
+    VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes); // Мод отображения
+    VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities); // Текущий размер области вывода
 
     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
     if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
@@ -42,23 +42,23 @@ void SwapChainManager::createSwapChain() {
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = extent;
     createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // <- Указываем, что будет храниться внутри swapchain
+    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // изображения - цель рендеринга (не для чтения или других операций).
 
     QueueFamilyIndices indices = deviceManager.findQueueFamilies(deviceManager.physicalDevice());
     uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
     if (indices.graphicsFamily != indices.presentFamily) {
-        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT; // <- Потоки могут обмениваться информацией(Отрисовка и вывод изображения)
+        createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT; // изображение может использоваться несколькими семействами очередей без синхронизации.
         createInfo.queueFamilyIndexCount = 2;
         createInfo.pQueueFamilyIndices = queueFamilyIndices;
     } else {
-        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE; // <- Работает только 1 поток
+        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE; // изображение принадлежит одному семейству очередей.
     }
 
-    createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
-    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    createInfo.preTransform = swapChainSupport.capabilities.currentTransform; // Поворот/отражение
+    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // Без  Альфа канала
     createInfo.presentMode = presentMode;
-    createInfo.clipped = VK_TRUE;
+    createInfo.clipped = VK_TRUE; // разрешает драйверу оптимизировать рендеринг (например, не рисовать перекрытые окном области).
 
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
@@ -86,9 +86,9 @@ VkImageViewPtr SwapChainManager::createImageView(VkImage image, VkFormat format,
         viewInfo.format = format;
         viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = 0;
-        viewInfo.subresourceRange.levelCount = 1;
+        viewInfo.subresourceRange.levelCount = 1; // Не используем минимаппинг
         viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount = 1;
+        viewInfo.subresourceRange.layerCount = 1; // Не используем текстуру-массив
 
         VkImageView rawView;
         if (vkCreateImageView(deviceManager.device(), &viewInfo, nullptr, &rawView) != VK_SUCCESS) {
@@ -146,20 +146,21 @@ void SwapChainManager::createRenderPass() {
 
     VkAttachmentDescription depthAttachment{};
     depthAttachment.format = VulkanUtils::findDepthFormat(deviceManager.physicalDevice());
-    depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT; // Без мультисэмплинга
+    depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // Очистить перед использованием
+    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE; // Не сохранять после использования
+    depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // Трафарет не используется
     depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;  // Начальное состояние не важно
+    depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL; // Оптимально для теста глубины
+
     VkAttachmentReference depthAttachmentRef{};
-    depthAttachmentRef.attachment = 1;
-    depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    depthAttachmentRef.attachment = 1; // Индекс в массиве attachments
+    depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL; // Состояние во время рендеринга
     
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = swapChainImageFormat;
-    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT; //Мультисемплинг
+    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT; // Без Мультисемплинга
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;//Очищаем буфер до рендера
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;// Сохраняем в память после рендера результат
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // Трафарет, не используем 
@@ -175,8 +176,8 @@ void SwapChainManager::createRenderPass() {
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS; // Работаем с графическим конвеером 
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef;
-    subpass.pColorAttachments = &colorAttachmentRef;
-    subpass.pDepthStencilAttachment = &depthAttachmentRef;
+    subpass.pColorAttachments = &colorAttachmentRef;// Буфер цвета
+    subpass.pDepthStencilAttachment = &depthAttachmentRef; // Буфер глубины
 
     
     VkSubpassDependency dependency{}; //Синхронизация 
@@ -222,14 +223,14 @@ void SwapChainManager::createImage(uint32_t width,
     imageInfo.extent.width = width;
     imageInfo.extent.height = height;
     imageInfo.extent.depth = 1;
-    imageInfo.mipLevels = 1;
+    imageInfo.mipLevels = 1; // Без мипмаппинга
     imageInfo.arrayLayers = 1;
     imageInfo.format = format;
     imageInfo.tiling = tiling;
-    imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; // Начальное состояние
     imageInfo.usage = usage;
-    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-    imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT; // Без мультисемплинга
+    imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE; // Для одной очереди
 
     VkImage rawImage;
     if (vkCreateImage(deviceManager.device(), &imageInfo, nullptr, &rawImage) != VK_SUCCESS) {
@@ -241,7 +242,7 @@ void SwapChainManager::createImage(uint32_t width,
     VkMemoryRequirements memRequirements;
     vkGetImageMemoryRequirements(deviceManager.device(), image.get(), &memRequirements);
 
-    VkMemoryAllocateInfo allocInfo{};
+    VkMemoryAllocateInfo allocInfo{}; //Выделям память
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = VulkanUtils::findMemoryType(deviceManager.physicalDevice(), memRequirements.memoryTypeBits, properties);
@@ -253,7 +254,7 @@ void SwapChainManager::createImage(uint32_t width,
     imageMemory.reset(rawMemory);
 
     
-    vkBindImageMemory(deviceManager.device(), image.get(), imageMemory.get(), 0);
+    vkBindImageMemory(deviceManager.device(), image.get(), imageMemory.get(), 0); // привязываем память к изображению 
 }
 
 void SwapChainManager::createDepthResources() {
@@ -263,8 +264,8 @@ void SwapChainManager::createDepthResources() {
                 swapChainExtent.height,
                 depthFormat,
                 VK_IMAGE_TILING_OPTIMAL,
-                VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, //использование как буфера глубины
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, // быстрая видеопамять GPU
                 depthImage,
                 depthImageMemory);
     depthImageView = createImageView(depthImage.get(), depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
@@ -288,7 +289,7 @@ void SwapChainManager::createFramebuffers() {
         framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = swapChainExtent.width;
         framebufferInfo.height = swapChainExtent.height;
-        framebufferInfo.layers = 1;
+        framebufferInfo.layers = 1; // для обычного 2D-рендеринга
 
         VkFramebuffer rawFramebuffer;
         if (vkCreateFramebuffer(deviceManager.device(), &framebufferInfo, nullptr, &rawFramebuffer) != VK_SUCCESS) {
