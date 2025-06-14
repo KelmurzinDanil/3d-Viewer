@@ -48,3 +48,7 @@ cmake --build . --config Debug
 - Поддержка анимации - Скелетная анимация и GPU-физика
 - ImGui интерфейс - Управление камерой и освещением
 - Поддержка всех форматов
+
+
+https://github.com/user-attachments/assets/f54ed20e-6078-417e-bfd1-7feed5d75c15
+
