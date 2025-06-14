@@ -49,6 +49,7 @@ cmake --build . --config Debug
 - ImGui интерфейс - Управление камерой и освещением
 - Поддержка всех форматов
 
+## Пример работы:
 
 https://github.com/user-attachments/assets/f54ed20e-6078-417e-bfd1-7feed5d75c15
 
